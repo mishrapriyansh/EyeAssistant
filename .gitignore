@@ -1,0 +1,20 @@
+# Environments and Secrets
+local.env
+.env
+venv/
+env/
+
+# Databases and Scraped Data
+data/
+chroma_db/
+*.sqlite3
+
+# Caches and Compiled Code
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Logs
+logs/
+*.log
