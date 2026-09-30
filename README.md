@@ -1,284 +1,412 @@
-# EyeAssist AI
+# EyeAssist AI — Phase-wise Implementation
 
-An AI-powered ophthalmology screening and knowledge assistant designed to combine
-retinal image analysis with Retrieval-Augmented Generation (RAG) and trusted
-medical web research.
+EyeAssist AI is a research-oriented AI assistant for ophthalmology that combines **Retrieval-Augmented Generation (RAG)**, trusted medical knowledge sources, web retrieval, and eventually **medical image classification** to provide evidence-grounded information about common eye diseases.
 
-> Disclaimer: EyeAssist AI is an academic/research project. It is not a
-> medical diagnostic system and must not be used as a substitute for evaluation
-> by a qualified healthcare professional.
-## Project Overview
-EyeAssist AI aims to provide two major capabilities:
+## Phase 1 — Trusted Data Collection & Knowledge Base ✅
 
-1. Analyze retinal/fundus images using a pretrained ophthalmology image
-   classification model to identify patterns associated with selected eye
-   conditions.
+**Objective:** Build a reliable ophthalmology knowledge base from trusted medical sources.
 
-2. Provide an ophthalmology knowledge assistant that retrieves information from
-   a curated medical knowledge base and, when necessary, searches trusted
-   medical sources on the web.
+### Implementation
 
-The project is being developed incrementally, with data acquisition forming
-the foundation for the future RAG system.
-### Phase 1 — Ophthalmology Data Collection
+* Identified authoritative ophthalmology and healthcare sources.
+* Collected information related to common eye diseases.
+* Automated web-page extraction and PDF downloading.
+* Organized documents topic-wise.
+* Created a structured data directory for raw and processed knowledge.
+* Implemented data-quality validation and reporting.
 
-**Status: Completed**
+### Trusted Sources
 
-The first phase focused on building a reliable medical knowledge acquisition
-pipeline.
+* American Academy of Ophthalmology (AAO)
+* National Eye Institute (NEI)
+* World Health Organization (WHO)
+* PubMed
+* MedlinePlus
+* Mayo Clinic
+* NHS
+* EyeWiki
 
-Current workflow:
+### Current Knowledge Base
 
+Topics include:
+
+* Cataract
+* Diabetic Retinopathy
+* Glaucoma
+* Eye Redness
+* Other ophthalmology-related information
+
+**Status:** Completed
+
+---
+
+## Phase 2 — Document Processing & Preparation
+
+**Objective:** Convert collected medical documents into clean, retrieval-ready text.
+
+### Implementation
+
+* Inspect and clean downloaded documents.
+* Remove irrelevant HTML/content artifacts.
+* Normalize text.
+* Handle duplicate and low-quality documents.
+* Organize documents according to disease/topic.
+* Prepare metadata such as:
+
+  * Source
+  * Disease/topic
+  * Document name
+  * URL
+  * Document type
+
+### Planned Processing Pipeline
+
+```text
+Raw Documents
+      ↓
+Text Extraction
+      ↓
+Cleaning & Normalization
+      ↓
+Metadata Creation
+      ↓
+Quality Validation
+      ↓
+Processed Knowledge Base
+```
+
+**Status:** In progress
+
+---
+
+## Phase 3 — Text Chunking & Embeddings
+
+**Objective:** Convert medical documents into meaningful searchable chunks.
+
+### Implementation
+
+* Divide documents into semantically useful chunks.
+* Experiment with chunk size and overlap.
+* Preserve document metadata with every chunk.
+* Generate vector embeddings using a local embedding model.
+* Prepare embeddings for vector database storage.
+
+### Pipeline
+
+```text
+Processed Documents
+        ↓
+Text Chunking
+        ↓
+Embedding Model
+        ↓
+Vector Representations
+```
+
+**Status:** Next implementation stage
+
+---
+
+## Phase 4 — Vector Database & Retrieval
+
+**Objective:** Build the retrieval layer of the RAG system.
+
+### Implementation
+
+* Store document chunks and embeddings in a vector database.
+* Implement semantic similarity search.
+* Retrieve the most relevant medical passages for a user query.
+* Preserve source metadata for citation and traceability.
+* Experiment with the number of retrieved documents (`Top-K`).
+
+### Retrieval Pipeline
+
+```text
 User Query
     ↓
-Web Search
+Query Embedding
     ↓
-Trusted Domain Filtering
+Vector Search
     ↓
-Web Scraping
+Relevant Medical Chunks
     ↓
-HTML Parsing
-    ↓
-Clean Medical Text
-    ↓
-Knowledge Base
+Context
+```
 
-### Completed Components
-
-- Web search module
-- Trusted-domain filtering
-- Web scraping
-- HTML parsing
-- Error handling for inaccessible webpages
-- Medical content extraction
-- Knowledge-base storage
-- Environment/configuration management
-- Modular project structure
+**Status:** Planned
 
 ---
 
-## Trusted Sources
+## Phase 5 — RAG-Based Medical Assistant
 
-The project restricts web research to selected trusted medical and
-ophthalmology sources.
+**Objective:** Generate responses grounded in the retrieved ophthalmology knowledge base.
 
-Examples include:
+### Implementation
 
-- American Academy of Ophthalmology (AAO)
-- National Eye Institute (NEI)
-- MedlinePlus
-- PubMed
-- EyeWiki
-- World Health Organization (WHO)
-- Mayo Clinic
-- NHS
-- Cleveland Clinic
+* Connect the retrieval system with a local LLM.
+* Use retrieved documents as contextual information.
+* Generate answers based on retrieved evidence rather than relying only on model knowledge.
+* Include source information with responses.
+* Design prompts specifically for ophthalmology-related queries.
+* Reduce unsupported or hallucinated responses.
 
-The list of allowed domains is maintained in the project configuration.
+### RAG Architecture
 
----
+```text
+                 ┌─────────────────┐
+                 │   User Query    │
+                 └────────┬────────┘
+                          ↓
+                 ┌─────────────────┐
+                 │ Query Embedding │
+                 └────────┬────────┘
+                          ↓
+                 ┌─────────────────┐
+                 │ Vector Database │
+                 └────────┬────────┘
+                          ↓
+                 ┌─────────────────┐
+                 │ Relevant Context│
+                 └────────┬────────┘
+                          ↓
+                 ┌─────────────────┐
+                 │      LLM        │
+                 └────────┬────────┘
+                          ↓
+                 ┌─────────────────┐
+                 │ Grounded Answer │
+                 └─────────────────┘
+```
 
-## Phase 2 — Image Analysis
-
-**Status:Planned / In Progress**
-
-The next phase will evaluate pretrained ophthalmology image-classification
-models rather than training a model from scratch.
-
-The initial target classes are:
-
-- Normal
-- Cataract
-- Glaucoma
-
-The system will focus on retinal/fundus images compatible with the selected
-model.
-
-The model will be evaluated using publicly available, de-identified
-ophthalmology datasets.
-
-Planned workflow:
-
-Fundus Image
-    ↓
-Image Validation
-    ↓
-Preprocessing
-    ↓
-Pretrained Model
-    ↓
-Prediction
-    ↓
-Confidence / Class Probabilities
-    ↓
-Screening Result
-
-The model output will be treated as an AI screening result rather than a
-medical diagnosis.
+**Status:** Planned
 
 ---
 
-## Phase 3 — Vector Database and RAG
+## Phase 6 — Trusted Web Retrieval Fallback
 
-**Status: Planned**
+**Objective:** Allow EyeAssist to retrieve newer information when the local knowledge base does not contain sufficient information.
 
-The cleaned ophthalmology documents collected during Phase 1 will be converted
-into a searchable knowledge base.
+### Logic
 
-Planned pipeline:
+```text
+User Query
+    ↓
+Knowledge Base Retrieval
+    ↓
+Relevant Information Found?
+   / \
+ Yes  No
+ ↓     ↓
+RAG   Web Search
+ ↓     ↓
+Answer + Sources
+```
 
-Medical Documents
-    ↓
-Document Chunking
-    ↓
-Embeddings
-    ↓
-Vector Database
-    ↓
-Retriever
-    ↓
-Relevant Medical Information
-    ↓
-Local LLM
-    ↓
-Answer
+### Implementation
 
-The vector database will preserve source metadata so that answers can be
-associated with their original medical sources.
+* Perform knowledge-base retrieval first.
+* Evaluate whether the retrieved context is sufficient.
+* If information is insufficient, search trusted web sources.
+* Restrict web retrieval to approved medical domains where possible.
+* Extract relevant information.
+* Provide source attribution.
+
+This creates a **hybrid RAG + web research architecture** rather than relying exclusively on static documents.
+
+**Status:** Planned
 
 ---
 
-## Phase 4 — Web Research Fallback
+## Phase 7 — Ophthalmology Image Classification
 
-**Status: Planned**
+**Objective:** Extend EyeAssist from a text-based research assistant into a multimodal system capable of analysing eye images.
 
-If the vector database does not contain sufficient information to answer a
-user's question, the system will use the web research pipeline.
+### Planned Capabilities
 
-Planned workflow:
+The image-analysis component will investigate classification of conditions such as:
 
-User Question
+* Normal eye
+* Cataract
+* Glaucoma
+* Diabetic Retinopathy
+* Other relevant ophthalmic conditions depending on dataset availability
+
+### Implementation Approach
+
+```text
+Eye Image
     ↓
-Vector Database
+Image Preprocessing
     ↓
-Sufficient Information?
-    │
-    ├── Yes → Generate Answer
-    │
-    └── No
-          ↓
-      Trusted Web Search
-          ↓
-        Scraper
-          ↓
-        Parser
-          ↓
-      Content Validation
-          ↓
-      Generate Answer
+Pre-trained / Fine-tuned CNN or Vision Model
+    ↓
+Disease Prediction
+    ↓
+Confidence / Classification Result
+```
 
-Only approved/trusted domains will be considered for medical information.
+Model development and experimentation will use GPU-based environments such as Kaggle where required.
+
+**Status:** Planned / Research stage
 
 ---
 
-## Phase 5 — Backend API
+## Phase 8 — Hybrid EyeAssist Architecture
 
-**Status: Planned**
+**Objective:** Combine image analysis, RAG, and web retrieval into a single AI assistant.
 
-A backend API will expose the system's functionality to the website.
+### Proposed Architecture
 
-Potential endpoints:
+```text
+                    ┌───────────────┐
+                    │     User      │
+                    └───────┬───────┘
+                            ↓
+                 ┌────────────────────┐
+                 │   EyeAssist AI     │
+                 └─────────┬──────────┘
+                           ↓
+              ┌────────────────────────┐
+              │    Query / Image       │
+              │      Analysis           │
+              └───────────┬────────────┘
+                          ↓
+             ┌────────────┴─────────────┐
+             ↓                          ↓
+      Text Question                 Eye Image
+             ↓                          ↓
+       RAG Pipeline              Image Classifier
+             ↓                          ↓
+      Vector Database             Prediction
+             ↓                          ↓
+             └────────────┬─────────────┘
+                          ↓
+                 ┌─────────────────┐
+                 │ Medical Context │
+                 └────────┬────────┘
+                          ↓
+                 ┌─────────────────┐
+                 │      LLM        │
+                 └────────┬────────┘
+                          ↓
+                 ┌─────────────────┐
+                 │ User Response   │
+                 │ + Sources       │
+                 └─────────────────┘
+```
 
-POST /analyze-image
-POST /chat
-GET  /report/{id}
+The goal is to allow the system to use **both structured medical knowledge and visual information** when responding to users.
 
-The exact API design will be finalized during implementation.
-
-## Phase 6 — Web Application
-
-**Status: Planned**
-
-The final application will provide role-based interfaces.
-
-### Healthcare Staff
-
-Healthcare staff will be able to:
-
-- Upload retinal/fundus images
-- Run AI screening
-- View model predictions
-- Generate screening reports
-
-### Patients
-
-Patients will be able to:
-
-- View their screening report
-- Learn about the reported condition
-- Ask ophthalmology-related questions
-- Access information from trusted sources
-
-### Ophthalmologist
-
-A future interface may allow an ophthalmologist to:
-
-- Review the original image
-- View AI screening results
-- Review relevant medical information
-- Make the final clinical assessment
-
-The AI system will not replace professional diagnosis.
-
-
-## Project Architecture
-
-The planned high-level architecture is:
-                    EyeAssist AI
-                         |
-        +----------------+----------------+
-        |                |                |
-        v                v                v
- Image Analysis      RAG System       Web Research
-        |                |                |
-        v                v                v
- Pretrained Model    Vector DB        Trusted Sources
-        |                |                |
-        +----------------+----------------+
-                         |
-                         v
-                    Local LLM
-                    (Ollama)
-                         |
-                         v
-                    Backend API
-                         |
-                         v
-                    Web Application
+**Status:** Planned
 
 ---
-EyeAssist-AI/
-│
-├── app/
-│   ├── main.py
-│   ├── config.py
-│   ├── search.py
-│   ├── scraper.py
-│   ├── parser.py
-│   ├── file_manager.py
-│   └── ...
-│
-├── data/
-│   └── knowledge_base/
-│       ├── raw/
-│       ├── cleaned/
-│       └── metadata/
-│
-├── logs/
-│
-├── tests/
-│
-├── .env
-├── .gitignore
-├── requirements.txt
-└── README.md
+
+## Phase 9 — Backend & Web Application
+
+**Objective:** Convert the research prototype into an accessible web application.
+
+### Planned Components
+
+* Python backend
+* RAG pipeline
+* Vector database
+* LLM integration
+* Image upload and classification
+* Source/citation display
+* User-friendly chat interface
+
+### User Flow
+
+```text
+User
+ ↓
+Upload Image / Ask Question
+ ↓
+EyeAssist Processing
+ ↓
+RAG / Image Analysis / Web Retrieval
+ ↓
+AI Response
+ ↓
+Sources + Relevant Information
+```
+
+**Status:** Planned
+
+---
+
+## Phase 10 — Evaluation & Research Validation
+
+**Objective:** Evaluate the reliability and performance of the complete system.
+
+### RAG Evaluation
+
+* Retrieval relevance
+* Context quality
+* Answer faithfulness
+* Source correctness
+* Hallucination analysis
+* Response latency
+
+### Image Model Evaluation
+
+* Accuracy
+* Precision
+* Recall
+* F1-score
+* Confusion matrix
+* Class-wise performance
+
+### System Evaluation
+
+* End-to-end response quality
+* Retrieval failure cases
+* Image classification failure cases
+* Performance under different query types
+* Comparison of different models/configurations
+
+**Status:** Planned
+
+---
+
+# Overall Development Roadmap
+
+```text
+Phase 1
+Trusted Data Collection
+        ↓
+Phase 2
+Document Processing
+        ↓
+Phase 3
+Chunking + Embeddings
+        ↓
+Phase 4
+Vector Database + Retrieval
+        ↓
+Phase 5
+RAG Assistant
+        ↓
+Phase 6
+Trusted Web Fallback
+        ↓
+Phase 7
+Image Classification
+        ↓
+Phase 8
+Hybrid AI System
+        ↓
+Phase 9
+Web Application
+        ↓
+Phase 10
+Evaluation + Research Validation
+```
+
+## Current Focus
+
+The immediate development priority is the **RAG pipeline**:
+
+**Data → Cleaning → Chunking → Embeddings → Vector Database → Retrieval → LLM → Grounded Response → Citations**
+
+The image-classification component will be integrated after the core RAG assistant is functioning reliably.
